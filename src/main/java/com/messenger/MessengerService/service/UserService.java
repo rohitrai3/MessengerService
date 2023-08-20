@@ -1,0 +1,99 @@
+package com.messenger.MessengerService.service;
+
+import com.messenger.MessengerService.dao.MessengerDao;
+import com.messenger.MessengerService.model.AddUserInput;
+import com.messenger.MessengerService.model.CheckUidExistOutput;
+import com.messenger.MessengerService.model.CheckUsernameExistOutput;
+import com.messenger.MessengerService.model.GetUserOutput;
+import com.messenger.MessengerService.model.GetUsernameOutput;
+import com.messenger.MessengerService.model.UserData;
+import com.messenger.MessengerService.util.mapper.ObjectToUserDataMapper;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+
+@RequiredArgsConstructor
+@Service
+public class UserService {
+
+    @NonNull
+    private MessengerDao messengerDao;
+    @NonNull
+    private ObjectToUserDataMapper objectToUserDataMapper;
+
+    public ResponseEntity<Void> addUser(@NonNull AddUserInput input) {
+        UserData inputUserData = input.getUserData();
+
+        messengerDao.create("users/username", input.getUid(), inputUserData.getUsername());
+        messengerDao.create("users/info", inputUserData.getUsername(), inputUserData);
+
+        URI locationOfNewUserData = UriComponentsBuilder.newInstance()
+                .path("users/info/{username}")
+                .buildAndExpand(inputUserData.getUsername())
+                .toUri();
+
+        return ResponseEntity.created(locationOfNewUserData)
+                .build();
+    }
+
+    public ResponseEntity<GetUsernameOutput> getUsername(@NonNull String requestedUid) {
+        Object usernameObject = messengerDao.read("users/username/" + requestedUid);
+
+        if (usernameObject == null) {
+
+            return ResponseEntity.notFound()
+                    .build();
+        }
+
+        return ResponseEntity.ok(GetUsernameOutput.builder()
+                .username(usernameObject.toString())
+                .build());
+    }
+
+    public ResponseEntity<GetUserOutput> getUser(@NonNull String requestedUsername) {
+        Object userDataObject = messengerDao.read("users/info/" + requestedUsername);
+
+        if (userDataObject == null) {
+
+            return ResponseEntity.notFound()
+                    .build();
+        }
+
+        return ResponseEntity.ok(GetUserOutput.builder()
+                .userData(objectToUserDataMapper.map(userDataObject))
+                .build());
+    }
+
+    public ResponseEntity<CheckUidExistOutput> checkUidExist(@NonNull String requestedUid) {
+        boolean isUidExist = true;
+
+        Object uidObject = messengerDao.read("users/username/" + requestedUid);
+
+        if (uidObject == null) {
+            isUidExist = false;
+        }
+
+        return ResponseEntity.ok(CheckUidExistOutput.builder()
+                .isUidExist(isUidExist)
+                .build());
+    }
+
+    public ResponseEntity<CheckUsernameExistOutput> checkUsernameExist(@NonNull String requestedUsername) {
+        boolean isUsernameExist = true;
+
+        Object uidObject = messengerDao.read("users/info/" + requestedUsername);
+
+        if (uidObject == null) {
+            isUsernameExist = false;
+        }
+
+        return ResponseEntity.ok(CheckUsernameExistOutput.builder()
+                .isUsernameExist(isUsernameExist)
+                .build());
+    }
+
+}
