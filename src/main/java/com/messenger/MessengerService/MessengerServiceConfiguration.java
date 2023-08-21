@@ -18,7 +18,7 @@ public class MessengerServiceConfiguration {
     @Bean
     public void initializeFirebase() throws IOException {
         log.info("Initializing Firebase...");
-        Resource serviceAccountKey = new ClassPathResource("static/serviceAccountKey.json");
+        Resource serviceAccountKey = new ClassPathResource("static/service-account-key.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccountKey.getInputStream()))
