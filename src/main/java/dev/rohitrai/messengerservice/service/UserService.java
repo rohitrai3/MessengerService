@@ -2,6 +2,7 @@ package dev.rohitrai.messengerservice.service;
 
 import dev.rohitrai.messengerservice.dao.MessengerDao;
 import dev.rohitrai.messengerservice.model.AddUserInput;
+import dev.rohitrai.messengerservice.model.GetUsernameOutput;
 import dev.rohitrai.messengerservice.model.UserData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,20 @@ public class UserService {
 
         return ResponseEntity.created(locationOfNewUserData)
                 .build();
+    }
+
+    public ResponseEntity<GetUsernameOutput> getUsername(@NonNull String requestedUid) {
+        Object usernameObject = messengerDao.read("users/username/" + requestedUid);
+
+        if (usernameObject == null) {
+
+            return ResponseEntity.notFound()
+                    .build();
+        }
+
+        return ResponseEntity.ok(GetUsernameOutput.builder()
+                .username(usernameObject.toString())
+                .build());
     }
 
 }

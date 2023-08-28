@@ -1,5 +1,7 @@
 package dev.rohitrai.messengerservice;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import dev.rohitrai.messengerservice.model.AddUserInput;
 import dev.rohitrai.messengerservice.model.UserData;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +42,20 @@ class MessengerServiceApplicationTests {
 
 		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
+	}
+
+	@DisplayName("Should return username")
+	@Order(2)
+	@Test
+	public void shouldReturnUsername() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/user/get-username/1234abcd", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		String username = documentContext.read("@.username");
+
+		assertThat(username).isEqualTo("johndoe");
 	}
 
 }
