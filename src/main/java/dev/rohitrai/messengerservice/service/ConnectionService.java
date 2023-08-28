@@ -1,6 +1,7 @@
 package dev.rohitrai.messengerservice.service;
 
 import dev.rohitrai.messengerservice.dao.MessengerDao;
+import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,20 @@ public class ConnectionService {
                 .toUri();
 
         return ResponseEntity.created(locationOfNewConnectionRequest)
+                .build();
+    }
+
+    public ResponseEntity<Void> acceptConnectionRequest(@NonNull AcceptConnectionRequestInput input) {
+        String key = messengerDao.create("connections/" + input.getUser(), input.getConnection());
+        messengerDao.create("connections/" + input.getConnection(), input.getUser());
+        messengerDao.delete("/requests/" + input.getConnection() + "/" + input.getConnectionRequestKey());
+
+        URI locationOfNewConnection = UriComponentsBuilder.newInstance()
+                .path("connections/{user}/{key}")
+                .buildAndExpand(input.getUser(), key)
+                .toUri();
+
+        return ResponseEntity.created(locationOfNewConnection)
                 .build();
     }
 

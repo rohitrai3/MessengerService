@@ -2,6 +2,7 @@ package dev.rohitrai.messengerservice;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddUserInput;
 import dev.rohitrai.messengerservice.model.UserData;
@@ -163,6 +164,21 @@ class MessengerServiceApplicationTests {
 				.build();
 
 		ResponseEntity<Void> createResponse = restTemplate.postForEntity("/connection/add-connection-request", input, Void.class);
+
+		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
+	}
+
+	@DisplayName("Should accept connection request")
+	@Order(11)
+	@Test
+	public void shouldAcceptConnectionRequest() {
+		AcceptConnectionRequestInput newConnection = AcceptConnectionRequestInput.builder()
+				.user("johndoe")
+				.connection("alice")
+				.connectionRequestKey("12345")
+				.build();
+		ResponseEntity<Void> createResponse = restTemplate.postForEntity("/connection/accept-connection-request", newConnection, Void.class);
 
 		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
