@@ -27,6 +27,16 @@ public class FirebaseMessengerDao implements MessengerDao {
         ref.updateChildrenAsync(createData);
     }
 
+    public String create(@NonNull String path, @NonNull Object value) {
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference(path);
+
+        DatabaseReference newRef = ref.push();
+        newRef.setValueAsync(value);
+
+        return newRef.getKey();
+    }
+
     public Object read(@NonNull String path) {
         CountDownLatch done = new CountDownLatch(1);
         readData = null;

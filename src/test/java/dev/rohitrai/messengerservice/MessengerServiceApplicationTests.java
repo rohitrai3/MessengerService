@@ -2,6 +2,7 @@ package dev.rohitrai.messengerservice;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddUserInput;
 import dev.rohitrai.messengerservice.model.UserData;
 import org.junit.jupiter.api.DisplayName;
@@ -150,6 +151,21 @@ class MessengerServiceApplicationTests {
 		boolean isUsernameExist = documentContext.read("$.isUsernameExist");
 
 		assertThat(isUsernameExist).isEqualTo(false);
+	}
+
+	@DisplayName("Should add new connection request")
+	@Order(10)
+	@Test
+	public void shouldAddNewConnectionRequest() {
+		AddConnectionRequestInput input = AddConnectionRequestInput.builder()
+				.sender("johndoe")
+				.receiver("alice")
+				.build();
+
+		ResponseEntity<Void> createResponse = restTemplate.postForEntity("/connection/add-connection-request", input, Void.class);
+
+		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
 	}
 
 }
