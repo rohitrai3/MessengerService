@@ -1,13 +1,13 @@
-package com.messenger.MessengerService;
+package dev.rohitrai.messengerservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MessengerServiceApplication {
+public class MessengerserviceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MessengerServiceApplication.class, args);
+		SpringApplication.run(MessengerserviceApplication.class, args);
 	}
 
 }
