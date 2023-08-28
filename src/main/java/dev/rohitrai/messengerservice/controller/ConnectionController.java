@@ -1,5 +1,6 @@
 package dev.rohitrai.messengerservice.controller;
 
+import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import dev.rohitrai.messengerservice.service.ConnectionService;
 import lombok.NonNull;
@@ -24,6 +25,12 @@ public class ConnectionController {
     private ResponseEntity<Void> addConnectionRequest(@RequestBody @NonNull AddConnectionRequestInput input) {
 
         return connectionService.addConnectionRequest(input);
+    }
+
+    @PostMapping("/accept-connection-request")
+    private ResponseEntity<Void> acceptConnectionRequest(@RequestBody @NonNull AcceptConnectionRequestInput input) {
+
+        return connectionService.acceptConnectionRequest(input);
     }
 
 }

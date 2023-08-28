@@ -69,4 +69,10 @@ public class FirebaseMessengerDao implements MessengerDao {
         return readData;
     }
 
+    public void delete(@NonNull String path) {
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference(path);
+        ref.setValueAsync(null);
+    }
+
 }
