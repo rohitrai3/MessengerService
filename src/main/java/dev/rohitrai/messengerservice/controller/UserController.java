@@ -1,6 +1,7 @@
 package dev.rohitrai.messengerservice.controller;
 
 import dev.rohitrai.messengerservice.model.AddUserInput;
+import dev.rohitrai.messengerservice.model.GetUserOutput;
 import dev.rohitrai.messengerservice.model.GetUsernameOutput;
 import dev.rohitrai.messengerservice.service.UserService;
 import lombok.NonNull;
@@ -33,6 +34,12 @@ public class UserController {
     public ResponseEntity<GetUsernameOutput> getUsername(@PathVariable @NonNull String requestedUid) {
 
         return userService.getUsername(requestedUid);
+    }
+
+    @GetMapping("/get-user/{requestedUsername}")
+    public ResponseEntity<GetUserOutput> getUser(@PathVariable @NonNull String requestedUsername) {
+
+        return userService.getUser(requestedUsername);
     }
 
 }

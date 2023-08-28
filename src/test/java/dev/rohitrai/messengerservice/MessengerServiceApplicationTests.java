@@ -58,4 +58,42 @@ class MessengerServiceApplicationTests {
 		assertThat(username).isEqualTo("johndoe");
 	}
 
+	@DisplayName("Should respond not found")
+	@Order(3)
+	@Test
+	public void shouldResponseNotFound() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/user/get-username/username-does-not-exist", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(getResponse.getBody()).isBlank();
+	}
+
+	@DisplayName("Should return user")
+	@Order(4)
+	@Test
+	public void shouldReturnUser() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/user/get-user/johndoe", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		String username = documentContext.read("$.userData.username");
+		String name = documentContext.read("$.userData.name");
+		String photoUrl = documentContext.read("$.userData.photoUrl");
+
+		assertThat(username).isEqualTo("johndoe");
+		assertThat(name).isEqualTo("John Doe");
+		assertThat(photoUrl).isEqualTo("https://example.com/johndoe.png");
+	}
+
+	@DisplayName("Should respond not found")
+	@Order(5)
+	@Test
+	public void shouldRespondNotFound() {
+		ResponseEntity<AddUserInput> getResponse = restTemplate.getForEntity("/user/get-user/user-does-not-exist", AddUserInput.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(getResponse.getBody()).isNull();
+	}
+
 }

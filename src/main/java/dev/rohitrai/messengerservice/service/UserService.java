@@ -2,8 +2,10 @@ package dev.rohitrai.messengerservice.service;
 
 import dev.rohitrai.messengerservice.dao.MessengerDao;
 import dev.rohitrai.messengerservice.model.AddUserInput;
+import dev.rohitrai.messengerservice.model.GetUserOutput;
 import dev.rohitrai.messengerservice.model.GetUsernameOutput;
 import dev.rohitrai.messengerservice.model.UserData;
+import dev.rohitrai.messengerservice.util.mapper.ObjectToUserDataMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ public class UserService {
 
     @NonNull
     private MessengerDao messengerDao;
+    @NonNull
+    private ObjectToUserDataMapper objectToUserDataMapper;
 
     public ResponseEntity<Void> addUser(@NonNull AddUserInput input) {
         UserData inputUserData = input.getUserData();
@@ -45,6 +49,20 @@ public class UserService {
 
         return ResponseEntity.ok(GetUsernameOutput.builder()
                 .username(usernameObject.toString())
+                .build());
+    }
+
+    public ResponseEntity<GetUserOutput> getUser(@NonNull String requestedUsername) {
+        Object userDataObject = messengerDao.read("users/info/" + requestedUsername);
+
+        if (userDataObject == null) {
+
+            return ResponseEntity.notFound()
+                    .build();
+        }
+
+        return ResponseEntity.ok(GetUserOutput.builder()
+                .userData(objectToUserDataMapper.map(userDataObject))
                 .build());
     }
 
