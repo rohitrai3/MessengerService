@@ -10,13 +10,16 @@ import dev.rohitrai.messengerservice.dao.MessengerDao;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 @Component
 public class FirebaseMessengerDao implements MessengerDao {
 
+    private List<Object> readDataList;
     private Map<String, Object> readDataMap;
     private Object readData;
 
@@ -69,6 +72,39 @@ public class FirebaseMessengerDao implements MessengerDao {
         }
 
         return readData;
+    }
+
+    public List<Object> readList(@NonNull String path) {
+        CountDownLatch done = new CountDownLatch(1);
+        readDataList = new ArrayList<>();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference(path);
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    GenericTypeIndicator<Map<String, Object>> UsernameMap = new GenericTypeIndicator<>() { };
+                    readDataList.addAll(snapshot.getValue(UsernameMap).values());
+                }
+                done.countDown();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed: " + error.getCode());
+                done.countDown();
+            }
+        });
+
+        try {
+            done.await();
+        } catch (InterruptedException e) {
+            System.out.println("error: " + e);
+        }
+
+        return readDataList;
     }
 
     public Map<String, Object> readMap(@NonNull String path) {

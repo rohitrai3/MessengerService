@@ -219,4 +219,38 @@ class MessengerServiceApplicationTests {
 		assertThat(connectionRequestsCount).isEqualTo(0);
 	}
 
+	@DisplayName("Should return list of all connections")
+	@Order(11)
+	@Test
+	public void shouldReturnListOfAllConnections() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/connection/get-connections/johndoe", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int connectionRequestsCount = documentContext.read("$.userDataList.length()");
+		JSONArray usernameList = documentContext.read("$.userDataList..username");
+		JSONArray nameList = documentContext.read("$.userDataList..name");
+		JSONArray photoUrlList = documentContext.read("$.userDataList..photoUrl");
+
+		assertThat(connectionRequestsCount).isEqualTo(2);
+		assertThat(usernameList).containsExactlyInAnyOrder("alice", "bob");
+		assertThat(nameList).containsExactlyInAnyOrder("Alice", "Bob");
+		assertThat(photoUrlList).containsExactlyInAnyOrder("https://example.com/alice.png", "https://example.com/bob.png");
+	}
+
+	@DisplayName("Should return empty list of connections")
+	@Order(12)
+	@Test
+	public void shouldReturnEmptyListOfConnections() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/connection/get-connections/user-does-not-exist", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int connectionRequestsCount = documentContext.read("$.userDataList.length()");
+
+		assertThat(connectionRequestsCount).isEqualTo(0);
+	}
+
 }
