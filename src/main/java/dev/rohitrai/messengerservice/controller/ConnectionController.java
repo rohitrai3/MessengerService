@@ -3,6 +3,7 @@ package dev.rohitrai.messengerservice.controller;
 import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.GetConnectionRequestsOutput;
+import dev.rohitrai.messengerservice.model.GetConnectionsOutput;
 import dev.rohitrai.messengerservice.service.ConnectionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,12 @@ public class ConnectionController {
     public ResponseEntity<GetConnectionRequestsOutput> getConnectionRequests(@PathVariable @NonNull String requestedUsername) {
 
         return connectionService.getConnectionRequests(requestedUsername);
+    }
+
+    @GetMapping("/get-connections/{requestedUsername}")
+    public ResponseEntity<GetConnectionsOutput> getConnections(@PathVariable @NonNull String requestedUsername) {
+
+        return connectionService.getConnections(requestedUsername);
     }
 
 }

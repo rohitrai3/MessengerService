@@ -4,6 +4,7 @@ import dev.rohitrai.messengerservice.dao.MessengerDao;
 import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.GetConnectionRequestsOutput;
+import dev.rohitrai.messengerservice.model.GetConnectionsOutput;
 import dev.rohitrai.messengerservice.model.UserData;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -57,6 +60,21 @@ public class ConnectionService {
 
         return ResponseEntity.ok(GetConnectionRequestsOutput.builder()
                 .requestIdToUserData(requestIdToUserData)
+                .build());
+    }
+
+    public ResponseEntity<GetConnectionsOutput> getConnections(@NonNull String requestedUsername) {
+        List<UserData> userDataList = new ArrayList<>();
+
+        List<Object> usernameObjectList = messengerDao.readList("connections/" + requestedUsername);
+
+        usernameObjectList.forEach((username) -> {
+            UserData userData = userService.getUser(username.toString()).getBody().getUserData();
+            userDataList.add(userData);
+        });
+
+        return ResponseEntity.ok(GetConnectionsOutput.builder()
+                .userDataList(userDataList)
                 .build());
     }
 
