@@ -1,0 +1,8 @@
+{
+  "uid": "1234abcd",
+  "userData": {
+    "username": "johndoe",
+    "name": "John Doe",
+    "photoUrl": "https://example.com/johndoe.png"
+  }
+}
