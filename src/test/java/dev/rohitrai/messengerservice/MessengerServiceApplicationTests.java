@@ -256,7 +256,7 @@ class MessengerServiceApplicationTests {
 	}
 
 	@DisplayName("Should add new message")
-	@Order(3)
+	@Order(13)
 	@Test
 	public void shouldAddNewMessage() {
 		MessageData messageData = MessageData.builder()
@@ -273,6 +273,42 @@ class MessengerServiceApplicationTests {
 
 		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
+	}
+
+	@DisplayName("Should return list of all messages")
+	@Order(14)
+	@Test
+	public void shouldReturnListOfAllMessages() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/chat/get-messages?sender=johndoe&receiver=alice", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int messagesCount = documentContext.read("$.messageDataList.length()");
+		JSONArray senderList = documentContext.read("$.messageDataList..sender");
+		JSONArray receiverList = documentContext.read("$.messageDataList..receiver");
+		JSONArray messageList = documentContext.read("$.messageDataList..message");
+		JSONArray timestampList = documentContext.read("$.messageDataList..timestamp");
+
+		assertThat(messagesCount).isEqualTo(2);
+		assertThat(senderList).containsExactlyInAnyOrder("johndoe", "alice");
+		assertThat(receiverList).containsExactlyInAnyOrder("alice", "johndoe");
+		assertThat(messageList).containsExactlyInAnyOrder("Hello! Alice.", "Hi! John. How are you?");
+		assertThat(timestampList).containsExactlyInAnyOrder(1234567890, 1234567891);
+	}
+
+	@DisplayName("Should return empty list of messages")
+	@Order(15)
+	@Test
+	public void shouldReturnEmptyListOfMessages() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/chat/get-messages?sender=johndoe&receiver=user-does-not-exist", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int messagesCount = documentContext.read("$.messageDataList.length()");
+
+		assertThat(messagesCount).isEqualTo(0);
 	}
 
 }
