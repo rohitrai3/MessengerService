@@ -6,6 +6,7 @@ import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddUserInput;
 import dev.rohitrai.messengerservice.model.UserData;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -182,6 +183,40 @@ class MessengerServiceApplicationTests {
 
 		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
+	}
+
+	@DisplayName("Should return list of all connection requests")
+	@Order(12)
+	@Test
+	public void shouldReturnListOfAllConnectionRequests() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/connection/get-connection-requests/alice", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int connectionRequestsCount = documentContext.read("$.requestIdToUserData.length()");
+		JSONArray usernameList = documentContext.read("$.requestIdToUserData..username");
+		JSONArray nameList = documentContext.read("$.requestIdToUserData..name");
+		JSONArray photoUrlList = documentContext.read("$.requestIdToUserData..photoUrl");
+
+		assertThat(connectionRequestsCount).isEqualTo(2);
+		assertThat(usernameList).containsExactlyInAnyOrder("johndoe", "bob");
+		assertThat(nameList).containsExactlyInAnyOrder("John Doe", "Bob");
+		assertThat(photoUrlList).containsExactlyInAnyOrder("https://example.com/johndoe.png", "https://example.com/bob.png");
+	}
+
+	@DisplayName("Should return empty list of connection requests")
+	@Order(13)
+	@Test
+	public void shouldReturnEmptyListOfConnectionRequests() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/connection/get-connection-requests/user-does-not-exist", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int connectionRequestsCount = documentContext.read("$.requestIdToUserData.length()");
+
+		assertThat(connectionRequestsCount).isEqualTo(0);
 	}
 
 }

@@ -1,0 +1,14 @@
+{
+  "requestIdToUserData": {
+    "12345": {
+      "username": "johndoe",
+      "name": "John Doe",
+      "photoUrl": "https://example.com/johndoe.png"
+    },
+    "67890": {
+      "username": "alice",
+      "name": "Alice",
+      "photoUrl": "https://example.com/alice.png"
+    }
+  }
+}
