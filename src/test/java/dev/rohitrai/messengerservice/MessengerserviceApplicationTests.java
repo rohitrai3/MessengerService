@@ -1,10 +1,10 @@
-package com.messenger.MessengerService;
+package dev.rohitrai.messengerservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MessengerServiceApplicationTests {
+class MessengerserviceApplicationTests {
 
 	@Test
 	void contextLoads() {
