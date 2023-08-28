@@ -2,6 +2,7 @@ package dev.rohitrai.messengerservice.service;
 
 import dev.rohitrai.messengerservice.dao.MessengerDao;
 import dev.rohitrai.messengerservice.model.AddUserInput;
+import dev.rohitrai.messengerservice.model.CheckUidExistOutput;
 import dev.rohitrai.messengerservice.model.GetUserOutput;
 import dev.rohitrai.messengerservice.model.GetUsernameOutput;
 import dev.rohitrai.messengerservice.model.UserData;
@@ -63,6 +64,20 @@ public class UserService {
 
         return ResponseEntity.ok(GetUserOutput.builder()
                 .userData(objectToUserDataMapper.map(userDataObject))
+                .build());
+    }
+
+    public ResponseEntity<CheckUidExistOutput> checkUidExist(@NonNull String requestedUid) {
+        boolean isUidExist = true;
+
+        Object uidObject = messengerDao.read("users/username/" + requestedUid);
+
+        if (uidObject == null) {
+            isUidExist = false;
+        }
+
+        return ResponseEntity.ok(CheckUidExistOutput.builder()
+                .isUidExist(isUidExist)
                 .build());
     }
 

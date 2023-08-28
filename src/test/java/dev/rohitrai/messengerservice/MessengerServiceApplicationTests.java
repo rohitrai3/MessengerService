@@ -96,4 +96,32 @@ class MessengerServiceApplicationTests {
 		assertThat(getResponse.getBody()).isNull();
 	}
 
+	@DisplayName("Should return true for existing uid")
+	@Order(6)
+	@Test
+	public void shouldReturnTrueForExistingUid() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/user/check-uid-exist/1234abcd", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		boolean isUidExist = documentContext.read("$.isUidExist");
+
+		assertThat(isUidExist).isEqualTo(true);
+	}
+
+	@DisplayName("Should return false for non-existing uid")
+	@Order(7)
+	@Test
+	public void shouldReturnFalseForNonExistingUid() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/user/check-uid-exist/uid-does-not-exist", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		boolean isUidExist = documentContext.read("$.isUidExist");
+
+		assertThat(isUidExist).isEqualTo(false);
+	}
+
 }

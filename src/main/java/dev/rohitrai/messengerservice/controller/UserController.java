@@ -1,6 +1,7 @@
 package dev.rohitrai.messengerservice.controller;
 
 import dev.rohitrai.messengerservice.model.AddUserInput;
+import dev.rohitrai.messengerservice.model.CheckUidExistOutput;
 import dev.rohitrai.messengerservice.model.GetUserOutput;
 import dev.rohitrai.messengerservice.model.GetUsernameOutput;
 import dev.rohitrai.messengerservice.service.UserService;
@@ -40,6 +41,12 @@ public class UserController {
     public ResponseEntity<GetUserOutput> getUser(@PathVariable @NonNull String requestedUsername) {
 
         return userService.getUser(requestedUsername);
+    }
+
+    @GetMapping("/check-uid-exist/{requestedUid}")
+    public ResponseEntity<CheckUidExistOutput> checkUidExist(@PathVariable @NonNull String requestedUid) {
+
+        return userService.checkUidExist(requestedUid);
     }
 
 }
