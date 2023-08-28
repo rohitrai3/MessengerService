@@ -4,7 +4,9 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
+import dev.rohitrai.messengerservice.model.AddMessageInput;
 import dev.rohitrai.messengerservice.model.AddUserInput;
+import dev.rohitrai.messengerservice.model.MessageData;
 import dev.rohitrai.messengerservice.model.UserData;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.DisplayName;
@@ -251,6 +253,26 @@ class MessengerServiceApplicationTests {
 		int connectionRequestsCount = documentContext.read("$.userDataList.length()");
 
 		assertThat(connectionRequestsCount).isEqualTo(0);
+	}
+
+	@DisplayName("Should add new message")
+	@Order(3)
+	@Test
+	public void shouldAddNewMessage() {
+		MessageData messageData = MessageData.builder()
+				.sender("johndoe")
+				.receiver("alice")
+				.message("Hello! Alice.")
+				.timestamp(1234567890L)
+				.build();
+		AddMessageInput input = AddMessageInput.builder()
+				.messageData(messageData)
+				.build();
+
+		ResponseEntity<Void> createResponse = restTemplate.postForEntity("/chat/add-message", input, Void.class);
+
+		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(createResponse.getHeaders().getLocation()).isNotNull();
 	}
 
 }

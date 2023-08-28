@@ -1,0 +1,8 @@
+{
+  "messageData" : {
+    "sender": "johndoe",
+    "receiver": "alice",
+    "message": "Hello! Alice.",
+    "timestamp": 1234567890
+  }
+}

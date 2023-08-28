@@ -33,4 +33,21 @@ public class UserDataJsonTest {
         assertThat(json.write(userData)).hasJsonPathStringValue("@.photoUrl");
         assertThat(json.write(userData)).extractingJsonPathStringValue("@.photoUrl").isEqualTo("https://example.com/johndoe.png");
     }
+
+    @Test
+    @DisplayName("UserData deserialization test")
+    public void userDataDeserializationTest() throws IOException {
+        String expected = """
+                {
+                   "username": "johndoe",
+                   "name": "John Doe",
+                   "photoUrl": "https://example.com/johndoe.png"
+                }
+                """;
+
+        assertThat(json.parseObject(expected).getUsername()).isEqualTo("johndoe");
+        assertThat(json.parseObject(expected).getName()).isEqualTo("John Doe");
+        assertThat(json.parseObject(expected).getPhotoUrl()).isEqualTo("https://example.com/johndoe.png");
+    }
+
 }
