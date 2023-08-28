@@ -2,11 +2,14 @@ package dev.rohitrai.messengerservice.controller;
 
 import dev.rohitrai.messengerservice.model.AcceptConnectionRequestInput;
 import dev.rohitrai.messengerservice.model.AddConnectionRequestInput;
+import dev.rohitrai.messengerservice.model.GetConnectionRequestsOutput;
 import dev.rohitrai.messengerservice.service.ConnectionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +34,12 @@ public class ConnectionController {
     private ResponseEntity<Void> acceptConnectionRequest(@RequestBody @NonNull AcceptConnectionRequestInput input) {
 
         return connectionService.acceptConnectionRequest(input);
+    }
+
+    @GetMapping("/get-connection-requests/{requestedUsername}")
+    public ResponseEntity<GetConnectionRequestsOutput> getConnectionRequests(@PathVariable @NonNull String requestedUsername) {
+
+        return connectionService.getConnectionRequests(requestedUsername);
     }
 
 }
