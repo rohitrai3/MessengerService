@@ -1,0 +1,16 @@
+{
+  "messageDataList": [
+    {
+      "sender": "johndoe",
+      "receiver": "alice",
+      "message": "Hello! Alice.",
+      "timestamp": 1234567890
+    },
+    {
+      "sender": "alice",
+      "receiver": "johndoe",
+      "message": "Hi! John. How are you?",
+      "timestamp": 1234567891
+    }
+  ]
+}
