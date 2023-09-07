@@ -42,7 +42,7 @@ public class ConnectionService {
     public ResponseEntity<Void> acceptConnectionRequest(@NonNull AcceptConnectionRequestInput input) {
         String key = messengerDao.create("connections/" + input.getUser(), input.getConnection());
         messengerDao.create("connections/" + input.getConnection(), input.getUser());
-        messengerDao.delete("/requests/" + input.getConnection() + "/" + input.getConnectionRequestKey());
+        messengerDao.delete("/requests/" + input.getUser() + "/" + input.getConnectionRequestKey());
 
         URI locationOfNewConnection = UriComponentsBuilder.newInstance()
                 .path("connections/{user}/{key}")
