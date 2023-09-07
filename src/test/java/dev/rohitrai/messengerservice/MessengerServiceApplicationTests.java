@@ -63,10 +63,10 @@ class MessengerServiceApplicationTests {
 		assertThat(username).isEqualTo("johndoe");
 	}
 
-	@DisplayName("Should respond not found")
+	@DisplayName("Should respond username not found")
 	@Order(3)
 	@Test
-	public void shouldResponseNotFound() {
+	public void shouldRespondUsernameNotFound() {
 		ResponseEntity<String> getResponse = restTemplate.getForEntity("/user/get-username/username-does-not-exist", String.class);
 
 		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -91,10 +91,10 @@ class MessengerServiceApplicationTests {
 		assertThat(photoUrl).isEqualTo("https://example.com/johndoe.png");
 	}
 
-	@DisplayName("Should respond not found")
+	@DisplayName("Should respond user not found")
 	@Order(5)
 	@Test
-	public void shouldRespondNotFound() {
+	public void shouldRespondUserNotFound() {
 		ResponseEntity<AddUserInput> getResponse = restTemplate.getForEntity("/user/get-user/user-does-not-exist", AddUserInput.class);
 
 		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -222,7 +222,7 @@ class MessengerServiceApplicationTests {
 	}
 
 	@DisplayName("Should return list of all connections")
-	@Order(11)
+	@Order(14)
 	@Test
 	public void shouldReturnListOfAllConnections() {
 		ResponseEntity<String> getResponse = restTemplate.getForEntity("/connection/get-connections/johndoe", String.class);
@@ -242,7 +242,7 @@ class MessengerServiceApplicationTests {
 	}
 
 	@DisplayName("Should return empty list of connections")
-	@Order(12)
+	@Order(15)
 	@Test
 	public void shouldReturnEmptyListOfConnections() {
 		ResponseEntity<String> getResponse = restTemplate.getForEntity("/connection/get-connections/user-does-not-exist", String.class);
@@ -256,7 +256,7 @@ class MessengerServiceApplicationTests {
 	}
 
 	@DisplayName("Should add new message")
-	@Order(13)
+	@Order(16)
 	@Test
 	public void shouldAddNewMessage() {
 		MessageData messageData = MessageData.builder()
@@ -276,7 +276,7 @@ class MessengerServiceApplicationTests {
 	}
 
 	@DisplayName("Should return list of all messages")
-	@Order(14)
+	@Order(17)
 	@Test
 	public void shouldReturnListOfAllMessages() {
 		ResponseEntity<String> getResponse = restTemplate.getForEntity("/chat/get-messages?sender=johndoe&receiver=alice", String.class);
@@ -298,7 +298,7 @@ class MessengerServiceApplicationTests {
 	}
 
 	@DisplayName("Should return empty list of messages")
-	@Order(15)
+	@Order(18)
 	@Test
 	public void shouldReturnEmptyListOfMessages() {
 		ResponseEntity<String> getResponse = restTemplate.getForEntity("/chat/get-messages?sender=johndoe&receiver=user-does-not-exist", String.class);
@@ -309,6 +309,20 @@ class MessengerServiceApplicationTests {
 		int messagesCount = documentContext.read("$.messageDataList.length()");
 
 		assertThat(messagesCount).isEqualTo(0);
+	}
+
+	@DisplayName("Should return chat name")
+	@Order(19)
+	@Test
+	public void shouldReturnChatName() {
+		ResponseEntity<String> getResponse = restTemplate.getForEntity("/chat/get-chat-name?sender=johndoe&receiver=alice", String.class);
+
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		String chatName = documentContext.read("$.chatName");
+
+		assertThat(chatName).isEqualTo("alice_johndoe");
 	}
 
 }

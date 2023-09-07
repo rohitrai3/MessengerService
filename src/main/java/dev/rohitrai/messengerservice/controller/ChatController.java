@@ -1,6 +1,7 @@
 package dev.rohitrai.messengerservice.controller;
 
 import dev.rohitrai.messengerservice.model.AddMessageInput;
+import dev.rohitrai.messengerservice.model.GetChatNameOutput;
 import dev.rohitrai.messengerservice.model.GetMessagesOutput;
 import dev.rohitrai.messengerservice.service.ChatService;
 import lombok.NonNull;
@@ -33,6 +34,12 @@ public class ChatController {
     public ResponseEntity<GetMessagesOutput> getMessages(@RequestParam @NonNull String sender, @RequestParam @NonNull String receiver) {
 
         return chatService.getMessages(sender, receiver);
+    }
+
+    @GetMapping("/get-chat-name")
+    public ResponseEntity<GetChatNameOutput> getChatName(@RequestParam @NonNull String sender, @RequestParam @NonNull String receiver) {
+
+        return chatService.getChatName(sender, receiver);
     }
 
 }

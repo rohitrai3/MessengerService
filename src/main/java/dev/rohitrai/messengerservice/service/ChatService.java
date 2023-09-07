@@ -1,7 +1,9 @@
 package dev.rohitrai.messengerservice.service;
 
+import com.pusher.rest.Pusher;
 import dev.rohitrai.messengerservice.dao.MessengerDao;
 import dev.rohitrai.messengerservice.model.AddMessageInput;
+import dev.rohitrai.messengerservice.model.GetChatNameOutput;
 import dev.rohitrai.messengerservice.model.GetMessagesOutput;
 import dev.rohitrai.messengerservice.model.MessageData;
 import dev.rohitrai.messengerservice.util.ChatNameFormatter;
@@ -34,6 +36,12 @@ public class ChatService {
 
         String key = messengerDao.create("chats/" + chatName, messageData);
 
+        Pusher pusher = new Pusher("", "", "");
+        pusher.setCluster("ap2");
+        pusher.setEncrypted(true);
+
+        pusher.trigger(chatName, "my-event", input.getMessageData());
+
         URI locationOfNewMessage = UriComponentsBuilder.newInstance()
                 .path("chat/{chatName}/{key}")
                 .buildAndExpand(chatName, key)
@@ -54,6 +62,14 @@ public class ChatService {
 
         return ResponseEntity.ok(GetMessagesOutput.builder()
                 .messageDataList(messageDataList)
+                .build());
+    }
+
+    public ResponseEntity<GetChatNameOutput> getChatName(@NonNull String sender, @NonNull String receiver) {
+        String chatName = chatNameFormatter.getChatName(sender, receiver);
+
+        return ResponseEntity.ok(GetChatNameOutput.builder()
+                .chatName(chatName)
                 .build());
     }
 
